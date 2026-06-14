@@ -24,7 +24,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.actions import IncludeLaunchDescription, SetEnvironmentVariable
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
 
 
@@ -32,48 +32,27 @@ ARGUMENTS = [
     DeclareLaunchArgument('use_sim_time', default_value='true',
                           choices=['true', 'false'],
                           description='use_sim_time'),
-    DeclareLaunchArgument('world', default_value='warehouse',
-                          description='Simulation World'),
-    DeclareLaunchArgument('model', default_value='lite',
-                          choices=['standard', 'lite'],
-                          description='Turtlebot4 Model'),
 ]
-
 
 def generate_launch_description():
 
     # Directories
-    pkg_turtlebot4_gz_bringup = get_package_share_directory(
-        'turtlebot4_gz_bringup')
-    pkg_turtlebot4_gz_gui_plugins = get_package_share_directory(
-        'turtlebot4_gz_gui_plugins')
     pkg_turtlebot4_description = get_package_share_directory(
         'turtlebot4_description')
     pkg_irobot_create_description = get_package_share_directory(
         'irobot_create_description')
-    pkg_irobot_create_gz_bringup = get_package_share_directory(
-        'irobot_create_gz_bringup')
-    pkg_irobot_create_gz_plugins = get_package_share_directory(
-        'irobot_create_gz_plugins')
     pkg_ros_gz_sim = get_package_share_directory(
         'ros_gz_sim')
+    pkg_docking = get_package_share_directory(
+        'docking')
 
     # Set Gazebo resource path
     gz_resource_path = SetEnvironmentVariable(
         name='GZ_SIM_RESOURCE_PATH',
         value=':'.join([
-            os.path.join(pkg_turtlebot4_gz_bringup, 'worlds'),
-            os.path.join(pkg_irobot_create_gz_bringup, 'worlds'),
+            os.path.join(pkg_docking, 'worlds'),
             str(Path(pkg_turtlebot4_description).parent.resolve()),
-            str(Path(pkg_irobot_create_description).parent.resolve())
-        ])
-    )
-
-    gz_gui_plugin_path = SetEnvironmentVariable(
-        name='GZ_GUI_PLUGIN_PATH',
-        value=':'.join([
-            os.path.join(pkg_turtlebot4_gz_gui_plugins, 'lib'),
-            os.path.join(pkg_irobot_create_gz_plugins, 'lib')
+            str(Path(pkg_irobot_create_description).parent.resolve()),
         ])
     )
 
@@ -86,17 +65,13 @@ def generate_launch_description():
         PythonLaunchDescriptionSource([gz_sim_launch]),
         launch_arguments=[
             ('gz_args', [
-                LaunchConfiguration('world'),
-                '.sdf',
-                ' -r',
-                ' -v 4',
-                ' --gui-config ',
                 PathJoinSubstitution([
-                    pkg_turtlebot4_gz_bringup,
-                    'gui',
-                    LaunchConfiguration('model'),
-                    'gui.config'
-                ])
+                    pkg_docking,
+                    'worlds',
+                    'docking_world.sdf'
+                ]),
+                ' -r',
+                ' -v 4'
             ])
         ]
     )
@@ -112,7 +87,6 @@ def generate_launch_description():
     # Create launch description and add actions
     ld = LaunchDescription(ARGUMENTS)
     ld.add_action(gz_resource_path)
-    ld.add_action(gz_gui_plugin_path)
     ld.add_action(gazebo)
     ld.add_action(clock_bridge)
     return ld
