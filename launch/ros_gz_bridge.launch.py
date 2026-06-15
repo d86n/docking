@@ -31,8 +31,6 @@ ARGUMENTS = [
                           description='Use sim time'),
     DeclareLaunchArgument('robot_name', default_value='turtlebot4',
                           description='Gazebo model name'),
-    DeclareLaunchArgument('dock_name', default_value='standard_dock',
-                          description='Gazebo model name'),
     DeclareLaunchArgument('namespace', default_value='',
                           description='Robot namespace'),
     DeclareLaunchArgument('world', default_value='warehouse',
@@ -46,7 +44,6 @@ ARGUMENTS = [
 def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
     robot_name = LaunchConfiguration('robot_name')
-    dock_name = LaunchConfiguration('dock_name')
     namespace = LaunchConfiguration('namespace')
     world = LaunchConfiguration('world')
 
@@ -70,7 +67,6 @@ def generate_launch_description():
         PythonLaunchDescriptionSource([create3_ros_gz_bridge_launch]),
         launch_arguments=[
             ('robot_name', robot_name),
-            ('dock_name', dock_name),
             ('namespace', namespace),
             ('world', world)
         ]
