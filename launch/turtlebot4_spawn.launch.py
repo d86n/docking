@@ -38,6 +38,10 @@ ARGUMENTS = [
                           description='Robot namespace'),
 ]
 
+for pose_element in ['x', 'y', 'z', 'yaw']:
+    ARGUMENTS.append(DeclareLaunchArgument(pose_element, default_value='0.0',
+                     description=f'{pose_element} component of the robot pose.'))
+
 
 def generate_launch_description():
 
@@ -78,10 +82,10 @@ def generate_launch_description():
 
     # Spawn robot slightly clsoer to the floor to reduce the drop
     # Ensures robot remains properly docked after the drop
-    x_robot = '1.0'
-    y_robot = '2.0'
-    z_robot = '0.0'
-    yaw_robot = '0.0'
+    x_robot = LaunchConfiguration('x')
+    y_robot = LaunchConfiguration('y')
+    z_robot = LaunchConfiguration('z')
+    yaw_robot = LaunchConfiguration('yaw')
 
     spawn_robot_group_action = GroupAction([
         PushRosNamespace(namespace),
