@@ -52,10 +52,6 @@ ARGUMENTS = [
                           description='Whether to launch Nav2'),
 ]
 
-for pose_element in ['x', 'y', 'z', 'yaw']:
-    ARGUMENTS.append(DeclareLaunchArgument(pose_element, default_value='0.0',
-                     description=f'{pose_element} component of the robot pose.'))
-
 
 def generate_launch_description():
 
@@ -103,15 +99,16 @@ def generate_launch_description():
     # Launch configurations
     namespace = LaunchConfiguration('namespace')
     use_sim_time = LaunchConfiguration('use_sim_time')
-    x, y, z = LaunchConfiguration('x'), LaunchConfiguration('y'), LaunchConfiguration('z')
-    yaw = LaunchConfiguration('yaw')
     turtlebot4_node_yaml_file = LaunchConfiguration('param_file')
 
     robot_name = GetNamespacedName(namespace, 'turtlebot4')
 
     # Spawn robot slightly clsoer to the floor to reduce the drop
     # Ensures robot remains properly docked after the drop
-    z_robot = OffsetParser(z, -0.0025)
+    x_robot = '1.0'
+    y_robot = '2.0'
+    z_robot = '0.0'
+    yaw_robot = '0.0'
 
     spawn_robot_group_action = GroupAction([
         PushRosNamespace(namespace),
@@ -128,10 +125,10 @@ def generate_launch_description():
             package='ros_gz_sim',
             executable='create',
             arguments=['-name', robot_name,
-                       '-x', x,
-                       '-y', y,
+                       '-x', x_robot,
+                       '-y', y_robot,
                        '-z', z_robot,
-                       '-Y', yaw,
+                       '-Y', yaw_robot,
                        '-topic', 'robot_description'],
             output='screen'
         ),
