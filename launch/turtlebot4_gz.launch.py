@@ -26,8 +26,6 @@ from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 ARGUMENTS = [
     DeclareLaunchArgument('namespace', default_value='',
                           description='Robot namespace'),
-    DeclareLaunchArgument('rviz', default_value='false',
-                          choices=['true', 'false'], description='Start rviz.'),
     DeclareLaunchArgument('world', default_value='docking_world',
                           description='Simulation World'),
     DeclareLaunchArgument('model', default_value='standard',
@@ -61,7 +59,6 @@ def generate_launch_description():
         PythonLaunchDescriptionSource([robot_spawn_launch]),
         launch_arguments=[
             ('namespace', LaunchConfiguration('namespace')),
-            ('rviz', LaunchConfiguration('rviz')),
             ('x', LaunchConfiguration('x')),
             ('y', LaunchConfiguration('y')),
             ('z', LaunchConfiguration('z')),

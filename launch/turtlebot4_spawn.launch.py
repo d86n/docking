@@ -28,9 +28,6 @@ from launch_ros.actions import Node, PushRosNamespace
 
 
 ARGUMENTS = [
-    DeclareLaunchArgument('rviz', default_value='false',
-                          choices=['true', 'false'],
-                          description='Start rviz.'),
     DeclareLaunchArgument('use_sim_time', default_value='true',
                           choices=['true', 'false'],
                           description='use_sim_time'),
@@ -39,15 +36,6 @@ ARGUMENTS = [
                           description='Turtlebot4 Model'),
     DeclareLaunchArgument('namespace', default_value='',
                           description='Robot namespace'),
-    DeclareLaunchArgument('localization', default_value='false',
-                          choices=['true', 'false'],
-                          description='Whether to launch localization'),
-    DeclareLaunchArgument('slam', default_value='false',
-                          choices=['true', 'false'],
-                          description='Whether to launch SLAM'),
-    DeclareLaunchArgument('nav2', default_value='false',
-                          choices=['true', 'false'],
-                          description='Whether to launch Nav2'),
 ]
 
 
