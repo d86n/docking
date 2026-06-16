@@ -46,15 +46,6 @@ def generate_launch_description():
     namespace = LaunchConfiguration('namespace')
     world = LaunchConfiguration('world')
 
-    leds = [
-        'power',
-        'motors',
-        'comms',
-        'wifi',
-        'battery',
-        'user1',
-        'user2'
-    ]
 
     pkg_irobot_create_gz_bringup = get_package_share_directory(
         'irobot_create_gz_bringup')
@@ -145,9 +136,6 @@ def generate_launch_description():
     # Define LaunchDescription variable
     ld = LaunchDescription(ARGUMENTS)
     ld.add_action(create3_bridge)
-    ld.add_action(hmi_display_msg_bridge)
-    ld.add_action(hmi_buttons_msg_bridge)
-    ld.add_action(hmi_led_msg_bridge)
     ld.add_action(lidar_bridge)
     ld.add_action(oakd_camera_bridge)
     return ld
