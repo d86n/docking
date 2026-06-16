@@ -32,7 +32,7 @@ ARGUMENTS = [
     DeclareLaunchArgument('use_sim_time', default_value='true',
                           choices=['true', 'false'],
                           description='use_sim_time'),
-    DeclareLaunchArgument('world', default_value='warehouse',
+    DeclareLaunchArgument('world', default_value='docking_world',
                           description='Simulation World'),
     DeclareLaunchArgument('model', default_value='lite',
                           choices=['standard', 'lite'],
@@ -60,8 +60,6 @@ def generate_launch_description():
     gz_resource_path = SetEnvironmentVariable(
         name='GZ_SIM_RESOURCE_PATH',
         value=':'.join([
-            os.path.join(pkg_turtlebot4_gz_bringup, 'worlds'),
-            os.path.join(pkg_irobot_create_gz_bringup, 'worlds'),
             os.path.join(pkg_docking, 'worlds'),
             str(Path(pkg_turtlebot4_description).parent.resolve()),
             str(Path(pkg_irobot_create_description).parent.resolve())
