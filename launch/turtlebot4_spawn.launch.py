@@ -18,11 +18,9 @@
 from ament_index_python.packages import get_package_share_directory
 
 from irobot_create_common_bringup.namespace import GetNamespacedName
-from irobot_create_common_bringup.offset import OffsetParser
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, GroupAction, IncludeLaunchDescription
-from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 
@@ -60,10 +58,6 @@ def generate_launch_description():
         'turtlebot4_gz_bringup')
     pkg_turtlebot4_description = get_package_share_directory(
         'turtlebot4_description')
-    pkg_turtlebot4_viz = get_package_share_directory(
-        'turtlebot4_viz')
-    pkg_turtlebot4_navigation = get_package_share_directory(
-        'turtlebot4_navigation')
     pkg_irobot_create_common_bringup = get_package_share_directory(
         'irobot_create_common_bringup')
     pkg_irobot_create_gz_bringup = get_package_share_directory(
@@ -72,8 +66,6 @@ def generate_launch_description():
     # Paths
     turtlebot4_ros_gz_bridge_launch = PathJoinSubstitution(
         [pkg_turtlebot4_gz_bringup, 'launch', 'ros_gz_bridge.launch.py'])
-    rviz_launch = PathJoinSubstitution(
-        [pkg_turtlebot4_viz, 'launch', 'view_navigation.launch.py'])
     turtlebot4_node_launch = PathJoinSubstitution(
         [pkg_turtlebot4_gz_bringup, 'launch', 'turtlebot4_nodes.launch.py'])
     create3_nodes_launch = PathJoinSubstitution(
@@ -82,12 +74,6 @@ def generate_launch_description():
         [pkg_irobot_create_gz_bringup, 'launch', 'create3_gz_nodes.launch.py'])
     robot_description_launch = PathJoinSubstitution(
         [pkg_turtlebot4_description, 'launch', 'robot_description.launch.py'])
-    localization_launch = PathJoinSubstitution(
-        [pkg_turtlebot4_navigation, 'launch', 'localization.launch.py'])
-    slam_launch = PathJoinSubstitution(
-        [pkg_turtlebot4_navigation, 'launch', 'slam.launch.py'])
-    nav2_launch = PathJoinSubstitution(
-        [pkg_turtlebot4_navigation, 'launch', 'nav2.launch.py'])
 
     # Parameters
     param_file_cmd = DeclareLaunchArgument(
@@ -98,7 +84,6 @@ def generate_launch_description():
 
     # Launch configurations
     namespace = LaunchConfiguration('namespace')
-    use_sim_time = LaunchConfiguration('use_sim_time')
     turtlebot4_node_yaml_file = LaunchConfiguration('param_file')
 
     robot_name = GetNamespacedName(namespace, 'turtlebot4')
@@ -165,21 +150,6 @@ def generate_launch_description():
             ]
         ),
 
-        # RPLIDAR static transforms
-        Node(
-            name='rplidar_stf',
-            package='tf2_ros',
-            executable='static_transform_publisher',
-            output='screen',
-            arguments=[
-                '0', '0', '0', '0', '0', '0.0',
-                'rplidar_link', [robot_name, '/rplidar_link/rplidar']],
-            remappings=[
-                ('/tf', 'tf'),
-                ('/tf_static', 'tf_static'),
-            ]
-        ),
-
         # OAKD static transform
         # Required for pointcloud. See https://github.com/gazebosim/gz-sensors/issues/239
         Node(
@@ -201,51 +171,8 @@ def generate_launch_description():
 
     ])
 
-    # Localization
-    localization = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([localization_launch]),
-        launch_arguments=[
-            ('namespace', namespace),
-            ('use_sim_time', use_sim_time)
-        ],
-        condition=IfCondition(LaunchConfiguration('localization'))
-    )
-
-    # SLAM
-    slam = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([slam_launch]),
-        launch_arguments=[
-            ('namespace', namespace),
-            ('use_sim_time', use_sim_time)
-        ],
-        condition=IfCondition(LaunchConfiguration('slam'))
-    )
-
-    # Nav2
-    nav2 = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([nav2_launch]),
-        launch_arguments=[
-            ('namespace', namespace),
-            ('use_sim_time', use_sim_time)
-        ],
-        condition=IfCondition(LaunchConfiguration('nav2'))
-    )
-
-    # RViz
-    rviz = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([rviz_launch]),
-        launch_arguments=[
-            ('namespace', namespace),
-            ('use_sim_time', use_sim_time)],
-        condition=IfCondition(LaunchConfiguration('rviz')),
-    )
-
     # Define LaunchDescription variable
     ld = LaunchDescription(ARGUMENTS)
     ld.add_action(param_file_cmd)
     ld.add_action(spawn_robot_group_action)
-    ld.add_action(localization)
-    ld.add_action(slam)
-    ld.add_action(nav2)
-    ld.add_action(rviz)
     return ld

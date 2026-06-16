@@ -32,7 +32,7 @@ ARGUMENTS = [
                           description='Gazebo model name'),
     DeclareLaunchArgument('namespace', default_value='',
                           description='Robot namespace'),
-    DeclareLaunchArgument('world', default_value='warehouse',
+    DeclareLaunchArgument('world', default_value='docking_world',
                           description='World name'),
     DeclareLaunchArgument('model', default_value='standard',
                           choices=['standard', 'lite'],
@@ -61,28 +61,6 @@ def generate_launch_description():
             ('world', world)
         ]
     )
-
-    # lidar bridge
-    lidar_bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        name='lidar_bridge',
-        output='screen',
-        parameters=[{
-            'use_sim_time': use_sim_time
-        }],
-        arguments=[
-            ['/world/', world,
-             '/model/', robot_name,
-             '/link/rplidar_link/sensor/rplidar/scan' +
-             '@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan']
-        ],
-        remappings=[
-            (['/world/', world,
-              '/model/', robot_name,
-              '/link/rplidar_link/sensor/rplidar/scan'],
-             'scan')
-        ])
 
     # Camera sensor bridge
     oakd_camera_bridge = Node(
@@ -136,6 +114,5 @@ def generate_launch_description():
     # Define LaunchDescription variable
     ld = LaunchDescription(ARGUMENTS)
     ld.add_action(create3_bridge)
-    ld.add_action(lidar_bridge)
     ld.add_action(oakd_camera_bridge)
     return ld

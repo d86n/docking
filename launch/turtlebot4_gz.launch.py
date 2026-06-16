@@ -42,8 +42,7 @@ for pose_element in ['x', 'y', 'z', 'yaw']:
 
 def generate_launch_description():
     # Directories
-    pkg_docking = get_package_share_directory(
-        'docking')
+    pkg_docking = get_package_share_directory('docking')
 
     # Paths
     gazebo_launch = PathJoinSubstitution(
