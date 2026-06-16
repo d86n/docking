@@ -86,8 +86,6 @@ def generate_launch_description():
         [pkg_irobot_create_gz_bringup, 'launch', 'create3_gz_nodes.launch.py'])
     robot_description_launch = PathJoinSubstitution(
         [pkg_turtlebot4_description, 'launch', 'robot_description.launch.py'])
-    dock_description_launch = PathJoinSubstitution(
-        [pkg_irobot_create_common_bringup, 'launch', 'dock_description.launch.py'])
     localization_launch = PathJoinSubstitution(
         [pkg_turtlebot4_navigation, 'launch', 'localization.launch.py'])
     slam_launch = PathJoinSubstitution(
