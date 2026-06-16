@@ -43,14 +43,10 @@ ARGUMENTS = [
 def generate_launch_description():
 
     # Directories
-    pkg_turtlebot4_gz_bringup = get_package_share_directory(
-        'turtlebot4_gz_bringup')
     pkg_turtlebot4_description = get_package_share_directory(
         'turtlebot4_description')
     pkg_irobot_create_description = get_package_share_directory(
         'irobot_create_description')
-    pkg_irobot_create_gz_bringup = get_package_share_directory(
-        'irobot_create_gz_bringup')
     pkg_ros_gz_sim = get_package_share_directory(
         'ros_gz_sim')
     pkg_docking = get_package_share_directory(

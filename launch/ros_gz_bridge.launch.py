@@ -18,9 +18,8 @@ from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
-from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import EqualsSubstitution, LaunchConfiguration
+from launch.substitutions import LaunchConfiguration
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
 
 from launch_ros.actions import Node
@@ -30,8 +29,6 @@ ARGUMENTS = [
                           choices=['true', 'false'],
                           description='Use sim time'),
     DeclareLaunchArgument('robot_name', default_value='turtlebot4',
-                          description='Gazebo model name'),
-    DeclareLaunchArgument('dock_name', default_value='standard_dock',
                           description='Gazebo model name'),
     DeclareLaunchArgument('namespace', default_value='',
                           description='Robot namespace'),
@@ -46,7 +43,6 @@ ARGUMENTS = [
 def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
     robot_name = LaunchConfiguration('robot_name')
-    dock_name = LaunchConfiguration('dock_name')
     namespace = LaunchConfiguration('namespace')
     world = LaunchConfiguration('world')
 
@@ -70,7 +66,6 @@ def generate_launch_description():
         PythonLaunchDescriptionSource([create3_ros_gz_bridge_launch]),
         launch_arguments=[
             ('robot_name', robot_name),
-            ('dock_name', dock_name),
             ('namespace', namespace),
             ('world', world)
         ]
@@ -97,65 +92,6 @@ def generate_launch_description():
               '/link/rplidar_link/sensor/rplidar/scan'],
              'scan')
         ])
-
-    # Display message bridge
-    hmi_display_msg_bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        name='hmi_display_msg_bridge',
-        output='screen',
-        parameters=[{'use_sim_time': use_sim_time}],
-        arguments=[
-            [namespace, '/hmi/display/raw' +
-             '@std_msgs/msg/String' +
-             ']gz.msgs.StringMsg'],
-            [namespace, '/hmi/display/selected' +
-             '@std_msgs/msg/Int32' +
-             ']gz.msgs.Int32']
-        ],
-        remappings=[
-            ([namespace, '/hmi/display/raw'],
-             'hmi/display/_raw'),
-            ([namespace, '/hmi/display/selected'],
-             'hmi/display/_selected')
-        ],
-        condition=IfCondition(EqualsSubstitution(LaunchConfiguration('model'), 'standard')))
-
-    # Buttons message bridge
-    hmi_buttons_msg_bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        name='hmi_buttons_msg_bridge',
-        output='screen',
-        parameters=[{'use_sim_time': use_sim_time}],
-        arguments=[
-            [namespace, '/hmi/buttons' +
-             '@std_msgs/msg/Int32' +
-             '[gz.msgs.Int32']
-        ],
-        remappings=[
-            ([namespace, '/hmi/buttons'],
-             'hmi/buttons/_set')
-        ],
-        condition=IfCondition(EqualsSubstitution(LaunchConfiguration('model'), 'standard')))
-
-    # Buttons message bridge
-    hmi_led_msg_bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        name='hmi_led_msg_bridge',
-        output='screen',
-        parameters=[{'use_sim_time': use_sim_time}],
-        arguments=[
-            [namespace, '/hmi/led/' + led +
-             '@std_msgs/msg/Int32' +
-             ']gz.msgs.Int32'] for led in leds
-        ],
-        remappings=[
-            ([namespace, '/hmi/led/' + led],
-             'hmi/led/_' + led) for led in leds
-        ],
-        condition=IfCondition(EqualsSubstitution(LaunchConfiguration('model'), 'standard')))
 
     # Camera sensor bridge
     oakd_camera_bridge = Node(

@@ -18,7 +18,7 @@
 from ament_index_python.packages import get_package_share_directory
 
 from irobot_create_common_bringup.namespace import GetNamespacedName
-from irobot_create_common_bringup.offset import OffsetParser, RotationalOffsetX, RotationalOffsetY
+from irobot_create_common_bringup.offset import OffsetParser
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, GroupAction, IncludeLaunchDescription
@@ -110,19 +110,10 @@ def generate_launch_description():
     turtlebot4_node_yaml_file = LaunchConfiguration('param_file')
 
     robot_name = GetNamespacedName(namespace, 'turtlebot4')
-    dock_name = GetNamespacedName(namespace, 'standard_dock')
 
-    # Calculate dock offset due to yaw rotation
-    dock_offset_x = RotationalOffsetX(0.157, yaw)
-    dock_offset_y = RotationalOffsetY(0.157, yaw)
-    # Spawn dock at robot position + rotational offset
-    x_dock = OffsetParser(x, dock_offset_x)
-    y_dock = OffsetParser(y, dock_offset_y)
     # Spawn robot slightly clsoer to the floor to reduce the drop
     # Ensures robot remains properly docked after the drop
     z_robot = OffsetParser(z, -0.0025)
-    # Rotate dock towards robot
-    yaw_dock = OffsetParser(yaw, 3.1416)
 
     spawn_robot_group_action = GroupAction([
         PushRosNamespace(namespace),
@@ -132,13 +123,6 @@ def generate_launch_description():
             PythonLaunchDescriptionSource([robot_description_launch]),
             launch_arguments=[('model', LaunchConfiguration('model')),
                               ('use_sim_time', LaunchConfiguration('use_sim_time'))]
-        ),
-
-        # Dock description
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([dock_description_launch]),
-            # The robot starts docked
-            launch_arguments={'gazebo': 'ignition'}.items(),
         ),
 
         # Spawn TurtleBot 4
@@ -154,26 +138,12 @@ def generate_launch_description():
             output='screen'
         ),
 
-        # Spawn Dock
-        Node(
-            package='ros_gz_sim',
-            executable='create',
-            arguments=['-name', dock_name,
-                       '-x', x_dock,
-                       '-y', y_dock,
-                       '-z', z,
-                       '-Y', yaw_dock,
-                       '-topic', 'standard_dock_description'],
-            output='screen',
-        ),
-
         # ROS IGN bridge
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([turtlebot4_ros_gz_bridge_launch]),
             launch_arguments=[
                 ('model', LaunchConfiguration('model')),
                 ('robot_name', robot_name),
-                ('dock_name', dock_name),
                 ('namespace', namespace)]
         ),
 
@@ -197,7 +167,6 @@ def generate_launch_description():
             PythonLaunchDescriptionSource([create3_gz_nodes_launch]),
             launch_arguments=[
                 ('robot_name', robot_name),
-                ('dock_name', dock_name),
             ]
         ),
 
