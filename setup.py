@@ -29,6 +29,7 @@ setup(
     entry_points={
         'console_scripts': [
             'aruco_detector = docking.aruco_detector:main',
+            'auto_docking = docking.auto_docking:main',
         ],
     },
 )
