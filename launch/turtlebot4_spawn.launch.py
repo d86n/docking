@@ -54,12 +54,13 @@ def generate_launch_description():
         'irobot_create_common_bringup')
     pkg_irobot_create_gz_bringup = get_package_share_directory(
         'irobot_create_gz_bringup')
+    pkg_docking = get_package_share_directory('docking')
 
     # Paths
     turtlebot4_ros_gz_bridge_launch = PathJoinSubstitution(
-        [pkg_turtlebot4_gz_bringup, 'launch', 'ros_gz_bridge.launch.py'])
+        [pkg_docking, 'launch', 'ros_gz_bridge.launch.py'])
     turtlebot4_node_launch = PathJoinSubstitution(
-        [pkg_turtlebot4_gz_bringup, 'launch', 'turtlebot4_nodes.launch.py'])
+        [pkg_docking, 'launch', 'turtlebot4_nodes.launch.py'])
     create3_nodes_launch = PathJoinSubstitution(
         [pkg_irobot_create_common_bringup, 'launch', 'create3_nodes.launch.py'])
     create3_gz_nodes_launch = PathJoinSubstitution(
