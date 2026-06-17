@@ -70,14 +70,14 @@
         <visual name='visual'>
           <geometry>
             <mesh>
-              <uri>file:///home/dien/ros2_ws/src/docking/models/dock/aruco_dock.dae</uri>
+              <uri>file:///home/dien/ros2_ws/src/docking/models/dock/dock2.dae</uri>
             </mesh>
           </geometry>
         </visual>
         <collision name='collision'>
           <geometry>
             <mesh>
-              <uri>file:///home/dien/ros2_ws/src/docking/models/dock/aruco_dock.dae</uri>
+              <uri>file:///home/dien/ros2_ws/src/docking/models/dock/dock2.dae</uri>
             </mesh>
           </geometry>
         </collision>
